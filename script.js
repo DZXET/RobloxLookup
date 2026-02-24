@@ -1,4 +1,6 @@
 // ===== ROBLOX USER CHECKER =====
+// !! เปลี่ยน WORKER_URL เป็น URL ของ Cloudflare Worker คุณ !!
+const WORKER_URL = 'https://dzxet.tueftyk.workers.dev/';
 
 // ===== DOM =====
 const input     = document.getElementById('usernameInput');
@@ -11,44 +13,14 @@ const resultSec = document.getElementById('resultSection');
 searchBtn.addEventListener('click', handleSearch);
 input.addEventListener('keydown', e => { if (e.key === 'Enter') handleSearch(); });
 
-// ===== FETCH: ยิงทุก proxy พร้อมกัน เอาตัวแรกที่สำเร็จ =====
-function fetchRace(url, timeoutMs = 10000) {
-  const proxies = [
-    'https://api.allorigins.win/raw?url=' + encodeURIComponent(url),
-    'https://corsproxy.io/?' + encodeURIComponent(url),
-    'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(url),
-  ];
-
-  const withTimeout = (promise) =>
-    new Promise((resolve, reject) => {
-      const t = setTimeout(() => reject(new Error('timeout')), timeoutMs);
-      promise
-        .then(res => { clearTimeout(t); resolve(res); })
-        .catch(err => { clearTimeout(t); reject(err); });
-    });
-
-  // Promise.any = เอาตัวแรกที่ resolve (ไม่ reject)
-  return Promise.any(
-    proxies.map(p =>
-      withTimeout(
-        fetch(p).then(res => {
-          if (!res.ok) throw new Error('not ok');
-          return res;
-        })
-      )
-    )
-  );
+// ===== FETCH ผ่าน Worker =====
+async function api(url) {
+  const res = await fetch(WORKER_URL + '?url=' + encodeURIComponent(url));
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  return res;
 }
-
-async function getJSON(url) {
-  const res = await fetchRace(url);
-  return res.json();
-}
-
-async function getText(url) {
-  const res = await fetchRace(url);
-  return res.text();
-}
+async function getJSON(url) { return (await api(url)).json(); }
+async function getText(url) { return (await api(url)).text(); }
 
 // ===== MAIN =====
 async function handleSearch() {
@@ -84,7 +56,7 @@ async function handleSearch() {
 
   } catch (err) {
     console.error(err);
-    showError('เชื่อมต่อ API ไม่ได้ กรุณาลองใหม่อีกครั้ง');
+    showError('เชื่อมต่อ API ไม่ได้ กรุณาลองใหม่');
   } finally {
     setLoading(false);
   }
@@ -129,9 +101,7 @@ function render(user, avatarUrl, friends, followers, following, isPremium) {
   document.getElementById('premiumBadge').classList.toggle('hidden', !isPremium);
   document.getElementById('bannedBadge').classList.toggle('hidden', !user.isBanned);
 
-  // บัญชีถูกลบ = ชื่อจะเป็น "[Deleted]" หรือ description ว่าง + banned
-  const isDeleted = (user.name || '').toLowerCase().includes('deleted') ||
-                    user.isDeleted === true;
+  const isDeleted = (user.name || '').toLowerCase().includes('deleted') || user.isDeleted === true;
   document.getElementById('deletedBadge').classList.toggle('hidden', !isDeleted);
 
   document.getElementById('userId').textContent         = user.id;
@@ -141,7 +111,6 @@ function render(user, avatarUrl, friends, followers, following, isPremium) {
 
   document.getElementById('bioText').textContent =
     (user.description || '').trim() || '(ไม่มีคำอธิบาย)';
-
   document.getElementById('createdDate').textContent =
     user.created ? fmtDate(user.created) : '—';
 
@@ -160,24 +129,20 @@ function fmt(n) {
   if (n === '—' || n == null) return '—';
   return Number(n).toLocaleString('th-TH');
 }
-
 function fmtDate(iso) {
   return new Date(iso).toLocaleDateString('th-TH', {
     year: 'numeric', month: 'long', day: 'numeric'
   });
 }
-
 function setLoading(state) {
   searchBtn.disabled = state;
   btnText.classList.toggle('hidden', state);
   btnLoader.classList.toggle('hidden', !state);
 }
-
 function showError(msg) {
   errorMsg.textContent = msg;
   errorMsg.classList.remove('hidden');
 }
-
 function hideError() {
   errorMsg.classList.add('hidden');
 }
