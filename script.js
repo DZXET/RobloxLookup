@@ -1,6 +1,6 @@
 // ===== ROBLOX USER CHECKER =====
 // !! เปลี่ยน WORKER_URL เป็น URL ของ Cloudflare Worker คุณ !!
-const WORKER_URL = 'https://dzxet.tueftyk.workers.dev/';
+const WORKER_URL = 'https://dzxet.tueftyk.workers.dev';
 
 // ===== DOM =====
 const input     = document.getElementById('usernameInput');
