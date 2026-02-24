@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Roblox User Checker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="scanline"></div>
+  <div class="noise"></div>
+
+  <div class="container">
+    <header class="header">
+      <div class="logo-wrap">
+        <span class="logo-icon">⬛</span>
+        <h1 class="logo-text">ROBLOX<span class="accent">LOOKUP</span></h1>
+      </div>
+      <p class="tagline">// ค้นหาข้อมูลผู้เล่น Roblox</p>
+    </header>
+
+    <section class="search-section">
+      <div class="search-box">
+        <div class="input-wrapper">
+          <span class="input-icon">▶</span>
+          <input
+            type="text"
+            id="usernameInput"
+            placeholder="ใส่ Username..."
+            autocomplete="off"
+            spellcheck="false"
+          />
+        </div>
+        <button id="searchBtn" class="search-btn">
+          <span class="btn-text">SEARCH</span>
+          <span class="btn-loader hidden">◌</span>
+        </button>
+      </div>
+      <div id="errorMsg" class="error-msg hidden"></div>
+    </section>
+
+    <section id="resultSection" class="result-section hidden">
+      <div class="result-card">
+        <div class="card-glow"></div>
+
+        <div class="card-top">
+          <div class="avatar-wrap">
+            <div class="avatar-ring"></div>
+            <img id="avatarImg" src="" alt="avatar" class="avatar-img" />
+            <div class="avatar-status" id="onlineStatus"></div>
+          </div>
+          <div class="user-info">
+            <h2 id="displayName" class="display-name"></h2>
+            <p id="username" class="username"></p>
+            <div class="badge-row">
+              <span id="verifiedBadge" class="badge badge-verified hidden">✔ VERIFIED</span>
+              <span id="premiumBadge" class="badge badge-premium hidden">★ PREMIUM</span>
+              <span id="bannedBadge" class="badge badge-banned hidden">⛔ BANNED</span>
+              <span id="deletedBadge" class="badge badge-deleted hidden">🗑 DELETED</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="stats-grid">
+          <div class="stat-box">
+            <span class="stat-label">USER ID</span>
+            <span class="stat-value" id="userId"></span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">FRIENDS</span>
+            <span class="stat-value" id="friendCount"></span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">FOLLOWERS</span>
+            <span class="stat-value" id="followerCount"></span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">FOLLOWING</span>
+            <span class="stat-value" id="followingCount"></span>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="bio-section">
+          <span class="bio-label">ABOUT</span>
+          <p id="bioText" class="bio-text"></p>
+        </div>
+
+        <div class="created-row">
+          <span class="created-label">📅 สร้างบัญชีเมื่อ:</span>
+          <span id="createdDate" class="created-date"></span>
+        </div>
+
+        <a id="profileLink" href="#" target="_blank" class="profile-link-btn">
+          เปิดโปรไฟล์บน Roblox ↗
+        </a>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <p>ข้อมูลจาก Roblox Public API • ไม่มีการเก็บข้อมูล</p>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
