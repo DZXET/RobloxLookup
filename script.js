@@ -1,6 +1,9 @@
 // ===== ROBLOX USER CHECKER =====
-// !! เปลี่ยน WORKER_URL เป็น URL ของ Cloudflare Worker คุณ !!
-const WORKER_URL = 'https://dzxet.tueftyk.workers.dev';
+// ใช้ roproxy.com — proxy สำหรับ Roblox API โดยเฉพาะ
+
+function roproxy(url) {
+  return url.replace('roblox.com', 'roproxy.com')
+}
 
 // ===== DOM =====
 const input     = document.getElementById('usernameInput');
@@ -13,14 +16,17 @@ const resultSec = document.getElementById('resultSection');
 searchBtn.addEventListener('click', handleSearch);
 input.addEventListener('keydown', e => { if (e.key === 'Enter') handleSearch(); });
 
-// ===== FETCH ผ่าน Worker =====
-async function api(url) {
-  const res = await fetch(WORKER_URL + '?url=' + encodeURIComponent(url));
-  if (!res.ok) throw new Error('HTTP ' + res.status);
-  return res;
+async function getJSON(url) {
+  const res = await fetch(roproxy(url))
+  if (!res.ok) throw new Error('HTTP ' + res.status)
+  return res.json()
 }
-async function getJSON(url) { return (await api(url)).json(); }
-async function getText(url) { return (await api(url)).text(); }
+
+async function getText(url) {
+  const res = await fetch(roproxy(url))
+  if (!res.ok) throw new Error('HTTP ' + res.status)
+  return res.text()
+}
 
 // ===== MAIN =====
 async function handleSearch() {
