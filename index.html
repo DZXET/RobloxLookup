@@ -3,108 +3,166 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Roblox User Checker</title>
+  <title>RBX Lookup</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="scanline"></div>
-  <div class="noise"></div>
+
+  <div class="bg-blobs">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+  </div>
 
   <div class="container">
+
     <header class="header">
-      <div class="logo-wrap">
-        <span class="logo-icon">⬛</span>
-        <h1 class="logo-text">ROBLOX<span class="accent">LOOKUP</span></h1>
+      <div class="logo-block">
+        <div class="logo-eyebrow">— ROBLOX PLAYER LOOKUP —</div>
+        <h1 class="logo-main">RBLX<span class="logo-dot">.</span></h1>
+        <p class="logo-sub">ค้นหาข้อมูลผู้เล่น Roblox แบบ Real-time</p>
       </div>
-      <p class="tagline">// ค้นหาข้อมูลผู้เล่น Roblox</p>
     </header>
 
     <section class="search-section">
       <div class="search-box">
         <div class="input-wrapper">
-          <span class="input-icon">▶</span>
+          <svg class="input-icon" viewBox="0 0 20 20" fill="none" width="17" height="17">
+            <circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" stroke-width="1.6"/>
+            <path d="M13 13l3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
           <input
             type="text"
             id="usernameInput"
-            placeholder="ใส่ Username..."
+            placeholder="ค้นหา Username..."
             autocomplete="off"
             spellcheck="false"
           />
         </div>
         <button id="searchBtn" class="search-btn">
-          <span class="btn-text">SEARCH</span>
-          <span class="btn-loader hidden">◌</span>
+          <span class="btn-text">ค้นหา</span>
+          <span class="btn-loader hidden">
+            <svg viewBox="0 0 24 24" fill="none" width="15" height="15" class="spin-svg">
+              <circle cx="12" cy="12" r="9" stroke="rgba(255,255,255,0.25)" stroke-width="2.5"/>
+              <path d="M12 3a9 9 0 019 9" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+            </svg>
+          </span>
         </button>
+        <button id="clearBtn" class="clear-btn hidden" title="ล้างการค้นหา">
+          <svg viewBox="0 0 16 16" fill="none" width="16" height="16">
+            <path d="M2 2l12 12M14 2L2 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+      <div id="recentSearches" class="recent-searches hidden">
+        <div class="recent-label">ค้นหาล่าสุด</div>
+        <div id="recentList" class="recent-list"></div>
       </div>
       <div id="errorMsg" class="error-msg hidden"></div>
     </section>
 
     <section id="resultSection" class="result-section hidden">
-      <div class="result-card">
-        <div class="card-glow"></div>
+      <div class="result-layout">
 
-        <div class="card-top">
-          <div class="avatar-wrap">
-            <div class="avatar-ring"></div>
-            <img id="avatarImg" src="" alt="avatar" class="avatar-img" />
-            <div class="avatar-status" id="onlineStatus"></div>
-          </div>
-          <div class="user-info">
-            <h2 id="displayName" class="display-name"></h2>
-            <p id="username" class="username"></p>
-            <div class="badge-row">
-              <span id="verifiedBadge" class="badge badge-verified hidden">✔ VERIFIED</span>
-              <span id="premiumBadge" class="badge badge-premium hidden">★ PREMIUM</span>
-              <span id="bannedBadge" class="badge badge-banned hidden">⛔ BANNED</span>
-              <span id="deletedBadge" class="badge badge-deleted hidden">🗑 DELETED</span>
+        <div class="result-card">
+
+        <div class="card-topbar">
+          <span class="topbar-label">PLAYER DATA</span>
+          <span class="topbar-id" id="stripId"></span>
+        </div>
+
+        <div class="card-body">
+          <div class="profile-row">
+            <div class="avatar-frame">
+              <img id="avatarImg" src="" alt="avatar" class="avatar-img" />
+              <div class="avatar-status" id="onlineStatus"></div>
+            </div>
+            <div class="user-info">
+              <h2 id="displayName" class="display-name"></h2>
+              <p id="username" class="username-tag"></p>
+              <div class="badge-row">
+                <span id="verifiedBadge" class="badge badge-verified hidden">✔ Verified</span>
+                <span id="premiumBadge" class="badge badge-premium hidden">★ Premium</span>
+                <span id="bannedBadge" class="badge badge-banned hidden">⛔ Banned</span>
+                <span id="deletedBadge" class="badge badge-deleted hidden">🗑 Deleted</span>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div class="divider"></div>
-
-        <div class="stats-grid">
-          <div class="stat-box">
-            <span class="stat-label">USER ID</span>
-            <span class="stat-value" id="userId"></span>
+          <div class="stats-grid">
+            <div class="stat-box stat-box-id">
+              <span class="stat-label">User ID</span>
+              <span class="stat-value small" id="userId"></span>
+              <button class="copy-btn" id="copyIdBtn" title="คัดลอก ID">
+                <svg id="copyIcon" viewBox="0 0 16 16" fill="none" width="13" height="13">
+                  <rect x="5" y="4" width="8" height="10" rx="1.5" stroke="currentColor" stroke-width="1.4"/>
+                  <path d="M3 11V3a1 1 0 011-1h7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                </svg>
+                <svg id="checkIcon" viewBox="0 0 16 16" fill="none" width="13" height="13" class="hidden">
+                  <path d="M3 8l4 4 6-6" stroke="var(--green)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">เพื่อน</span>
+              <span class="stat-value" id="friendCount"></span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">ผู้ติดตาม</span>
+              <span class="stat-value" id="followerCount"></span>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">กำลังติดตาม</span>
+              <span class="stat-value" id="followingCount"></span>
+            </div>
           </div>
-          <div class="stat-box">
-            <span class="stat-label">FRIENDS</span>
-            <span class="stat-value" id="friendCount"></span>
+
+          <div class="bio-block">
+            <div class="bio-label">เกี่ยวกับ</div>
+            <p id="bioText" class="bio-text"></p>
           </div>
-          <div class="stat-box">
-            <span class="stat-label">FOLLOWERS</span>
-            <span class="stat-value" id="followerCount"></span>
+
+          <div class="card-footer-row">
+            <div class="created-pill">
+              <svg viewBox="0 0 16 16" fill="none" width="13" height="13">
+                <rect x="2" y="3" width="12" height="11" rx="2" stroke="currentColor" stroke-width="1.4"/>
+                <path d="M5 2v2M11 2v2M2 7h12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+              </svg>
+              <span id="createdDate"></span>
+            </div>
+            <div class="footer-actions">
+              <button id="favoriteBtn" class="favorite-btn" title="บันทึกผู้เล่น">
+                <svg viewBox="0 0 16 16" fill="none" width="15" height="15">
+                  <path d="M8 1l2.39 4.85h5.22l-4.23 3.12 1.61 4.98L8 10.85 4.01 14l1.61-4.98-4.23-3.12h5.22L8 1" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+                </svg>
+              </button>
+              <a id="profileLink" href="#" target="_blank" class="open-btn">
+                เปิดโปรไฟล์
+                <svg viewBox="0 0 12 12" fill="none" width="11" height="11">
+                  <path d="M2 10L10 2M10 2H5M10 2v5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </a>
+            </div>
           </div>
-          <div class="stat-box">
-            <span class="stat-label">FOLLOWING</span>
-            <span class="stat-value" id="followingCount"></span>
-          </div>
-        </div>
+        </div><!-- card-body -->
 
-        <div class="divider"></div>
-
-        <div class="bio-section">
-          <span class="bio-label">ABOUT</span>
-          <p id="bioText" class="bio-text"></p>
-        </div>
-
-        <div class="created-row">
-          <span class="created-label">📅 สร้างบัญชีเมื่อ:</span>
-          <span id="createdDate" class="created-date"></span>
-        </div>
-
-        <a id="profileLink" href="#" target="_blank" class="profile-link-btn">
-          เปิดโปรไฟล์บน Roblox ↗
-        </a>
-      </div>
+      </div><!-- result-card -->
+      </div><!-- result-layout -->
     </section>
 
     <footer class="footer">
-      <p>ข้อมูลจาก Roblox Public API • ไม่มีการเก็บข้อมูล</p>
+      <div>ข้อมูลจาก Roblox Public API &nbsp;—&nbsp; ไม่มีการจัดเก็บข้อมูล</div>
+      <div class="credit">by dzxet</div>
     </footer>
+
+    <section id="savedSection" class="saved-section hidden">
+      <div class="saved-header">
+        <h2 class="saved-title">ผู้เล่นที่บันทึก</h2>
+        <button id="clearAllBtn" class="clear-all-btn" title="ลบทั้งหมด">ล้างทั้งหมด</button>
+      </div>
+      <div id="savedList" class="saved-list"></div>
+    </section>
   </div>
 
   <script src="script.js"></script>
